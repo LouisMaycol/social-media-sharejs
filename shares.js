@@ -39,7 +39,7 @@ SocialSharing.prototype.createShareBar = function (props) {
   this.media = {};
 
   if (!props.providers || props.providers.length === 0) {
-    this.props.providers = ['facebook', 'twitter', 'reddit', 'googleplus', 'email', 'linkedin']
+    this.props.providers = ['facebook', 'twitter', 'reddit', 'googleplus', 'linkedin', 'email']
   }
 
   this.generateAttributes();
@@ -93,7 +93,12 @@ SocialSharing.prototype.appendShareButton = function () {
         // Generate the social media share URL together with queryparams
         var url = shareLinksBaseUrl[provider] + queryParams;
         // Add Share Buttons to specified div id
-        $(self.props.container).append(`<button onClick="openLink('` + url + `')" > ` + provider + `</button > `);
+        var _provider = provider === 'googleplus' ? 'google-plus' : provider;
+        $(self.props.container).append(`
+          <span class="fa-stack fa-lg" onClick="openLink('` + url + `')" >
+            <i class="fa fa-circle fa-stack-2x ` + _provider + `"></i>
+            <i class="fa fa-` + _provider + ` fa-inverse fa-stack-1x" aria-hidden="true"></i>
+          </span> `);
       } else {
         console.log("Something went wrong with Social Sharing. Please contact administrator");
       }
