@@ -39,7 +39,7 @@ SocialSharing.prototype.createShareBar = function (props) {
   this.media = {};
 
   if (!props.providers || props.providers.length === 0) {
-    this.props.providers = ['facebook', 'twitter', 'reddit', 'googleplus', 'linkedin', 'email']
+    this.props.providers = ['facebook', 'twitter']
   }
 
   this.generateAttributes();
