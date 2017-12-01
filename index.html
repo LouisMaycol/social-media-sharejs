@@ -16,12 +16,12 @@
     crossorigin="anonymous"></script>
   <script src="shares.js"></script>
   <script>
-    var sharing = new SocialSharing();
-    sharing.createShareBar({
+    rapplerCreateSharebar({
       title: 'Hello Title',
       url: 'http://facebook.com',
-      container: '#share-bar',
+      container: 'share-bar',
       orientation: 'vertical',
+      via: 'louismaycol',
       providers: ['facebook', 'twitter', 'reddit']
     })
   </script>

@@ -22,11 +22,9 @@ let source = {
   email: "email",
 }
 
-function SocialSharing() {
-  this.props = {};
-}
+var media = {};
 
-SocialSharing.prototype.createShareBar = function (props) {
+rapplerCreateSharebar = function (props) {
   /** Required props:
    *  title
    *  url
@@ -35,67 +33,69 @@ SocialSharing.prototype.createShareBar = function (props) {
    *  providers
    */
 
-  this.props = props;
-  this.media = {};
+  media = {};
 
   if (!props.providers || props.providers.length === 0) {
-    this.props.providers = ['facebook', 'twitter']
+    props.providers = ['facebook', 'twitter']
   }
 
-  this.generateAttributes();
-  this.appendShareButton();
+  if (!props.orientation)
+    props.orientation = 'horizontal';
+
+  generateAttributes(props);
+  appendShareButton(props);
 }
 
-SocialSharing.prototype.generateAttributes = function () {
+generateAttributes = function (props) {
   // Generate the attributes required per social media
-  var self = this;
-  this.props.providers.forEach(function (provider) {
+
+  props.providers.forEach(function (provider) {
     if (provider === source.facebook) {
-      self.media[provider] = {
-        u: self.props.url
+      media[provider] = {
+        u: props.url
       }
     } else if (provider === source.twitter) {
-      self.media[provider] = {
-        url: self.props.url,
-        text: self.props.title
+      media[provider] = {
+        url: props.url,
+        text: props.title,
+        via: props.via
       }
     } else if (provider === source.reddit) {
-      self.media[provider] = {
-        url: self.props.url,
-        text: self.props.title
+      media[provider] = {
+        url: props.url,
+        text: props.title
       }
     } else if (provider === source.googleplus) {
-      self.media[provider] = {
-        url: self.props.url
+      media[provider] = {
+        url: props.url
       }
     } else if (provider === source.email) {
-      self.media[provider] = {
-        subject: self.props.title,
-        body: self.props.url
+      media[provider] = {
+        subject: props.title,
+        body: props.url
       }
     } else if (provider === source.linkedin) {
-      self.media[provider] = {
-        url: self.props.url,
-        title: self.props.title
+      media[provider] = {
+        url: props.url,
+        title: props.title
       }
     }
   });
   return;
 }
 
-SocialSharing.prototype.appendShareButton = function () {
-  var self = this;
-  for (var provider in this.media) {
-    if (this.media.hasOwnProperty(provider)) {
-      if (self.validateParams(provider, this.media[provider]).isValid) {
+appendShareButton = function (props) {
+  for (var provider in media) {
+    if (media.hasOwnProperty(provider)) {
+      if (validateParams(provider, media[provider]).isValid) {
         // Generate the queryparameter per social media
-        var queryParams = self.objectToGetParams(this.media[provider]);
+        var queryParams = objectToGetParams(media[provider]);
         // Generate the social media share URL together with queryparams
         var url = shareLinksBaseUrl[provider] + queryParams;
         // Add Share Buttons to specified div id
         var _provider = provider === 'googleplus' ? 'google-plus' : provider;
-        $(self.props.container).append(`
-          <span class="fa-stack fa-lg" onClick="openLink('` + url + `')" >
+        $('#' + props.container).append(`
+          <span class="fa-stack fa-lg ` + props.orientation + `" onClick="openLink('` + url + `')" >
             <i class="fa fa-circle fa-stack-2x ` + _provider + `"></i>
             <i class="fa fa-` + _provider + ` fa-inverse fa-stack-1x" aria-hidden="true"></i>
           </span> `);
@@ -104,9 +104,12 @@ SocialSharing.prototype.appendShareButton = function () {
       }
     }
   }
+
+  addcssrule();
+
 }
 
-SocialSharing.prototype.objectToGetParams = function (object) {
+objectToGetParams = function (object) {
   return '?' + Object.keys(object).filter(function (key) {
     return !!object[key];
   }).map(function (key) {
@@ -114,7 +117,7 @@ SocialSharing.prototype.objectToGetParams = function (object) {
   }).join('&');
 }
 
-SocialSharing.prototype.validateParams = function (src, val) {
+validateParams = function (src, val) {
   // Validating the required fields for sharing
   if (src == source.facebook) {
     if (!val.u)
@@ -168,4 +171,12 @@ openLink = function (url) {
   );
 
   return shareDialog;
+}
+
+addcssrule = function () {
+  var cssrules = $("<style type='text/css'> </style>").appendTo("head");
+
+  cssrules.append(".vertical { display:block; }");
+  cssrules.append(".horizontal { display:inline-block; }");
+
 }
